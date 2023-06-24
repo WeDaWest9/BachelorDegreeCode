@@ -1,0 +1,655 @@
+ Program
+   BeforeStart
+     time1≔1
+     rep_cycles≔0
+     rep_test≔ False 
+     change_var1≔ False 
+     trigger_time≔0.3
+     loop_times≔0
+     read_dmc_fail≔ False 
+     start_pose≔get_actual_tcp_pose()
+     cycle_time: Reset
+     cycle_time: Start
+     If camera_on≟ False 
+       Set camera_on=On
+       Wait: 5.0
+     'Halt'
+     MoveL
+       start_pose
+     return to home
+       rth≔ False 
+       Loop return_to_home≠1
+         rth≔ True 
+         If return_to_home ≟ 101
+           return_to_home≔1
+           MoveJ
+             home_pos
+         If return_to_home ≟ 102
+           MoveL
+             azv2
+             azv1
+           return_to_home≔101
+         If return_to_home ≟ 103
+           MoveL
+             azv3
+             azv2
+           return_to_home≔102
+         If return_to_home ≟ 104
+           MoveL
+             azv4
+             azv3
+           return_to_home≔103
+         If return_to_home ≟ 105
+           MoveL
+             azv5
+             azv4
+           return_to_home≔104
+         If return_to_home ≟ 106
+           MoveL
+             azv6
+             azv5
+           return_to_home≔105
+         If return_to_home ≟ 107
+           MoveL
+             azv7
+             azv6
+           return_to_home≔106
+         If return_to_home ≟ 108
+           MoveL
+             azv8
+             azv7
+           return_to_home≔107
+         If return_to_home ≟ 109
+           MoveL
+             azv9
+             azv8
+           return_to_home≔108
+         If return_to_home ≟ 110
+           MoveL
+             azv10
+             azv9
+           return_to_home≔109
+         If return_to_home ≟ 111
+           MoveL
+             azv11
+             azv10
+           return_to_home≔110
+         If return_to_home ≟ 112
+           MoveL
+             azv12
+             azv11
+           return_to_home≔111
+         If return_to_home ≟ 113
+           MoveL
+             azv13
+             azv12
+           return_to_home≔112
+         If return_to_home ≟ 114
+           MoveL
+             azv14
+             azv13
+           return_to_home≔113
+         If return_to_home ≟ 115
+           MoveL
+             azv15
+	     azv14
+           return_to_home≔114
+         If return_to_home ≟ 116
+           MoveL
+             azv_16
+             azv_15
+           return_to_home≔115
+         If return_to_home ≟ 117
+           MoveJ
+             Waypoint_2
+             home_pos
+             return_to_home≔1
+         If return_to_home≟120
+           MoveJ
+             service
+             home_pos
+             return_to_home≔1
+         rhd_rth
+           If return_to_home ≟ 201
+             MoveJ
+               home_pos
+             return_to_home≔1
+           If return_to_home ≟ 202
+             MoveL
+               azv_rhd2
+               azv_rhd1
+             return_to_home≔201
+           If return_to_home ≟ 203
+             MoveL
+               azv_rhd3
+               azv_rhd2
+             return_to_home≔202
+           If return_to_home ≟ 204
+             MoveL
+               azv_rhd4
+               azv_rhd3
+             return_to_home≔203
+           If return_to_home ≟ 205
+             MoveL
+               azv_rhd5
+               azv_rhd4
+             return_to_home≔204
+           If return_to_home ≟ 206
+             MoveL
+               azv_rhd6
+               azv_rhd5
+             return_to_home≔205
+           If return_to_home ≟ 207
+             MoveL
+               azv_rhd7
+               azv_rhd6
+             return_to_home≔206
+           If return_to_home ≟ 208
+             MoveL
+               azv_rhd8
+               azv_rhd7
+             return_to_home≔207
+           If return_to_home ≟ 209
+             MoveL
+               azv_rhd9
+               azv_rhd8
+             return_to_home≔208
+           If return_to_home ≟ 210
+             MoveL
+               azv_rhd10
+               azv_rhd9
+             return_to_home≔209
+           If return_to_home ≟ 211
+             MoveL
+               azv_rhd11
+               azv_rhd10
+             return_to_home≔210
+           If return_to_home ≟ 212
+             MoveL
+               azv_rhd12
+               azv_rhd11
+             return_to_home≔211
+           If return_to_home ≟ 213
+             MoveJ
+               azv_rhd13
+               azv_rhd12
+             return_to_home≔212
+           If return_to_home ≟ 214
+             MoveL
+               azv_rhd14
+               azv_rhd13
+             return_to_home≔213
+           If return_to_home ≟ 215
+             MoveL
+               azv_rhd15
+               azv_rhd14
+             return_to_home≔214
+           If return_to_home ≟ 216
+             MoveL
+               azv_rhd16
+               azv_rhd15
+             return_to_home≔215
+           If return_to_home ≟ 217
+             MoveJ
+               Waypoint_1
+               home_pos
+             return_to_home≔1
+     'Wait: 3.0'
+   Robot Program
+     If rth
+       Halt
+       rth≔ False 
+     Wait DI[0]=LO
+     Wait change_var1≟ False 
+     If lhd  and  not rhd and  not change_var1
+       progr 1 lhd
+         If MES
+           trigger DMC
+             Loop  not (lhd1 or loop_times≟3)
+               Set DMC_LHD=On
+               sleep(trigger_time)
+               Set DMC_LHD=Off
+               loop_times= loop_times+1
+               'Wait lhd1 or lhd2'
+               If lhd2
+                 read_dmc_fail≔ True 
+               ElseIf lhd1
+                 loop_times=3
+               Wait  not (lhd1 or lhd2)
+             loop_times≔1
+             If read_dmc_fail
+               Popup: Nu se poate citi codul dmc, cobotul se va opri.
+               Halt
+             If MES
+               Wait: 2.0
+               Set DO[1]=On
+               Wait lhd1_dmc_ok or lhd1_dmc_nok
+               Set DO[1]=Off
+               If lhd1_dmc_nok
+                 Popup: MES NOT OK.
+                 Halt
+         MoveJ
+           home_pos
+         MoveL
+           azv1
+           return_to_home≔101
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv2
+           return_to_home≔102
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv3
+           return_to_home≔103
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv4
+           return_to_home≔104
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv5
+           return_to_home≔105
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv6
+           return_to_home≔106
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv7
+           return_to_home≔107
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv8
+           return_to_home≔108
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv9
+           return_to_home≔109
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv10
+           return_to_home≔110
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv11
+           return_to_home≔111
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv12
+           return_to_home≔112
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv13
+           return_to_home≔113
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv14
+           return_to_home≔114
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         'trigger DMC'
+         MoveL
+           azv15
+           return_to_home≔115
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_16
+           return_to_home≔116
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveJ
+           Waypoint_2
+           return_to_home≔117
+           rep_cycles≔rep_cycles+1
+           'If rep_test'
+           home_pos
+           return_to_home≔1
+           If MES
+             Mes
+               Set OUT_MES=On
+               Wait lhd1_dmc_ok or lhd1_dmc_nok
+               Set OUT_MES=Off
+               If lhd1_dmc_nok
+                 'Popup: MES NOT OK.'
+           If rep_test
+             If rep_cycles≟50
+               Halt
+           Else
+             Halt
+     ElseIf rhd  and   not  lhd and  not change_var1
+       prog 2 RHD
+         If MES
+           trigger DMC Right Side
+             Loop  not (digital_in[6] or loop_times≟3)
+               Set DMC_RHD=On
+               sleep(trigger_time)
+               Set DMC_RHD=Off
+               loop_times= loop_times+1
+               Wait digital_in[6] or digital_in[7]
+               If digital_in[7]
+                 read_dmc_fail≔ True 
+               ElseIf digital_in[6]
+                 loop_times=3
+               Wait  not (digital_in[6] or digital_in[7])
+             loop_times≔1
+             If read_dmc_fail
+               Popup: Nu se poate citi codul dmc. Robotul se va opri
+               Halt
+             If MES
+               Wait: 1.0
+               Set DO[1]=On
+               Wait lhd1_dmc_ok or lhd1_dmc_nok
+               Set DO[1]=Off
+               If lhd1_dmc_nok
+                 Popup: MES NOT OK.
+                 Halt
+         MoveL
+           azv_rhd1
+           return_to_home≔201
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd2
+           return_to_home≔202
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd3
+           return_to_home≔203
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd4
+           return_to_home≔204
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd5
+           return_to_home≔205
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd6
+           return_to_home≔206
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd7
+           return_to_home≔207
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd8
+           return_to_home≔208
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd9
+           return_to_home≔209
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           'sleep(time1)'
+           'azv_rhd1'
+           azv_rhd10_new
+           return_to_home≔210
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd11
+           return_to_home≔211
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd12
+           return_to_home≔212
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd13
+           return_to_home≔213
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd14
+           return_to_home≔214
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd15
+           return_to_home≔215
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveL
+           azv_rhd16
+           return_to_home≔216
+           Wait is_steady()
+           sleep(time1)
+           trigger camera
+             Set camera_trigger=On
+             sleep(trigger_time)
+             Set camera_trigger=Off
+           sleep(time1)
+         MoveJ
+           Waypoint_1
+           return_to_home≔217
+           home_pos
+           return_to_home≔1
+           rep_cycles≔rep_cycles+1
+           If MES
+             Mes
+               Set OUT_MES=On
+               Wait lhd1_dmc_ok or lhd1_dmc_nok
+               Set OUT_MES=Off
+               If lhd1_dmc_nok
+                 Popup: MES NOT OK.
+                 cycle_time: Stop
+                 textmsg("Timpul de ciclu este: ",cycle_time)
+                 Halt
+         If rep_test
+           If rep_cycles≟50
+             Halt
+         Else
+           textmsg("Timpul de ciclu este: ",cycle_time)
+           cycle_time: Stop
+           Halt
+   Thread_1
+     If digital_in[0]
+       Wait: 3.0
+       change_var1≔ True 
+   Thread_2
+     If change_var1
+       query≔'Test de repetabilitate?'
+       If query
+         rep_test≔ True 
+         query≔ False 
+         If lhd
+           Popup: Program LHD
+         ElseIf rhd
+           Popup: Program RHD
+         query2≔'Doresti schimbare program?'
+       Else
+         query2≔'Doresti schimbare program?'
+       If query2
+         If lhd
+           Popup: Se schimba de la LHD la RHD
+           lhd≔ False 
+           rhd≔ True 
+         ElseIf rhd
+           Popup: Se schimba de la RHD la LHD
+           rhd≔ False 
+           lhd≔ True 
+         query≔ False 
+         query2≔ False 
+         change_var1≔ False 
+       Else
+         change_var1≔ False 
